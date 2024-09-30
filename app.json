@@ -3,8 +3,6 @@
   "displayName": "TapsellMediationExample",
   "react-native-tapsell-mediation": {
     "TapsellMediationAppKey": "76798342-99a7-4a5f-bf5a-60a088d5dcfb",
-    "TapsellMediationAppMarket": "CafeBazaar",
-    "TapsellMediationAdmobAdapterSignature": "ca-app-pub-3940256099942544~3347511713",
-    "TapsellMediationApplovinAdapterSignature": "5WfZLCGTQmDr6Mf7BBEf5blVwrf8VBMJSmwUSq9-1q5bPpCH_OGAWEP2z2lRkmonLgPzG6gbL4DlvUF9frFmt6"
+    "TapsellMediationAdmobAdapterSignature": "ca-app-pub-3940256099942544~3347511713"
   }
 }

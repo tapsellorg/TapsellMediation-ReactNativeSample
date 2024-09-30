@@ -6,9 +6,7 @@ Within the root of your React Native project, open the `app.json` or (if using E
 {
   "react-native-tapsell-mediation": {
     "TapsellMediationAppKey": "xxxxxxxx",
-    "TapsellMediationAdmobAdapterSignature": "ca-app-pub-xxxxxxxx~xxxxxxxx",
-    "TapsellMediationApplovinAdapterSignature": "xxxxxxxx",
-    "TapsellMediationAppMarket": "xxxx"
+    "TapsellMediationAdmobAdapterSignature": "ca-app-pub-xxxxxxxx~xxxxxxxx"
   }
 }
 ```
