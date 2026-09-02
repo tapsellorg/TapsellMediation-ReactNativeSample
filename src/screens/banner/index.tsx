@@ -6,31 +6,31 @@ import { useAdProvider } from '../../ad/AdProvider';
 import { LogText } from '../../components';
 
 const BannerScreen = () => {
-
-  const [ad, setAd] = useState(null);
-  const { requestBannerCallBack, showBannerAdCallBack, destroyBannerAdCallBack, logMessage } = useAdProvider();
+  const [ad, setAd] = useState<string | null>(null);
+  const {
+    requestBannerCallBack,
+    showBannerAdCallBack,
+    destroyBannerAdCallBack,
+    logMessage,
+  } = useAdProvider();
 
   return (
     <View style={styles.container}>
       <Button
         title="Request Ad"
-        onPress={() =>
-          requestBannerCallBack(AdKeys.TapsellMediationKeys.BANNER).then((id: string) => {
-            setAd(id);
-          })
-        }
+        onPress={async () => {
+          try {
+            const adId = await requestBannerCallBack(
+              AdKeys.TapsellMediationKeys.BANNER,
+            );
+            setAd(adId);
+          } catch {}
+        }}
       />
-      <Button
-        title="Show Ad"
-        onPress={() =>
-          showBannerAdCallBack(ad)
-        }
-      />
+      <Button title="Show Ad" onPress={() => showBannerAdCallBack(ad ?? '')} />
       <Button
         title="Destroy Ad"
-        onPress={() =>
-          destroyBannerAdCallBack(ad)
-        }
+        onPress={() => destroyBannerAdCallBack(ad ?? '')}
       />
       <LogText message={logMessage} />
     </View>
@@ -38,4 +38,3 @@ const BannerScreen = () => {
 };
 
 export default BannerScreen;
-

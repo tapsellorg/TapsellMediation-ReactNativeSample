@@ -1,0 +1,13 @@
+// Google maven is unreachable from this network; mirror it for every
+// build in this invocation, including the react-native gradle-plugin
+// included build (whose own repositories we can't edit).
+allprojects {
+    buildscript {
+        repositories {
+            maven { url 'https://maven.aliyun.com/repository/google' }
+        }
+    }
+    repositories {
+        maven { url 'https://maven.aliyun.com/repository/google' }
+    }
+}

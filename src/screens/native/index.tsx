@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Button, FlatList, View } from 'react-native';
 import { AdKeys } from '../../Constants';
 import { styles } from './styles';
@@ -14,72 +14,61 @@ const NativeScreen = () => {
     clickNativeAdCallBack,
     logMessage,
   } = useAdProvider();
-  const [ads, setAds] = React.useState<string[]>([]);
+  const [ads, setAds] = useState<string[]>([]);
+  const adsRef = useRef<string[]>([]);
 
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [logo, setLogo] = useState('');
-  const [bannerImageUrl, setBannerImageUrl] = useState('');
-  const [callToActionText, setCallToActionText] = useState('');
-
-  const destroyAd = useCallback((ad: string) => {
-    destroyNativeAdCallBack(ad);
-  }, []);
+  const destroyAd = useCallback(
+    (ad: string) => {
+      destroyNativeAdCallBack(ad);
+    },
+    [destroyNativeAdCallBack],
+  );
 
   useEffect(() => {
     return () => {
-      ads.forEach((ad: string) => {
+      adsRef.current.forEach(ad => {
         destroyAd(ad);
       });
     };
-  }, []);
+  }, [destroyAd]);
 
   return (
     <View style={styles.container}>
       <Button
         title="Request Ad"
-        onPress={() =>
-          requestNativeAdCallBack(AdKeys.LegacyKeys.NATIVE).then((ad: string) => {
-            setAds([ad, ...ads]);
-          })
-        }
+        onPress={async () => {
+          try {
+            const adId = await requestNativeAdCallBack(AdKeys.LegacyKeys.NATIVE);
+            adsRef.current = [adId, ...adsRef.current];
+            setAds([adId, ...ads]);
+          } catch {}
+        }}
       />
 
-      <FlatList style={styles.adList}
-                keyExtractor={(ad: string) => ad}
-                data={ads}
-                renderItem={({ item }) =>
-                  <NativeAdView adId={item}
-                                title={title}
-                                setTitle={setTitle}
-                                description={description}
-                                setDescription={setDescription}
-                                logo={logo}
-                                setLogo={setLogo}
-                                bannerImageUrl={bannerImageUrl}
-                                setBannerImageUrl={setBannerImageUrl}
-                                callToActionText={callToActionText}
-                                setCallToActionText={setCallToActionText}
-                                showNativeAdCallBack={showNativeAdCallBack}
-                                clickNativeAdCallBack={clickNativeAdCallBack}
-                                onAdImpression={() => {
-                                  console.log('onAdImpression');
-                                }}
-                                onAdClicked={() => {
-                                  console.log('onAdClicked');
-                                }}
-                                onAdFailed={(error: string) => {
-                                  console.log('onAdFailed', error);
-                                }}
-                  />
-                }
+      <FlatList
+        style={styles.adList}
+        keyExtractor={(ad: string) => ad}
+        data={ads}
+        renderItem={({ item }) => (
+          <NativeAdView
+            adId={item}
+            showNativeAdCallBack={showNativeAdCallBack}
+            clickNativeAdCallBack={clickNativeAdCallBack}
+            onAdImpression={() => {
+              console.log('onAdImpression');
+            }}
+            onAdClicked={() => {
+              console.log('onAdClicked');
+            }}
+            onAdFailed={(error: string) => {
+              console.log('onAdFailed', error);
+            }}
+          />
+        )}
       />
       <LogText style={styles.log} message={logMessage} />
     </View>
   );
 };
 
-
 export default NativeScreen;
-
-

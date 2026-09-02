@@ -1,34 +1,29 @@
-import React from 'react';
-import { CompletionState, type NativeAdDispatch } from '@react-native-tapsell-mediation/tapsell';
+import type { ReactNode } from 'react';
+import type { NativeAdDispatch } from '@react-native-tapsell-mediation/tapsell';
 
-export type NativeAdProps = {
-  children: any;
-  adId: string;
-
-  title: string;
-  description: string;
-  logo: string;
-  bannerImageUrl: string;
-  callToActionText: string;
-
-  setTitle: React.Dispatch<React.SetStateAction<string>>;
-  setDescription: React.Dispatch<React.SetStateAction<string>>;
-  setLogo: React.Dispatch<React.SetStateAction<string>>;
-  setBannerImageUrl: React.Dispatch<React.SetStateAction<string>>;
-  setCallToActionText: React.Dispatch<React.SetStateAction<string>>;
-
+export type NativeAdCallbacks = {
   onAdImpression: () => void;
   onAdClicked: () => void;
-  onAdClosed: () => void;
-  onAdFailed: (message: string) => void;
+  onAdFailed: (error: string) => void;
+};
 
-  showNativeAdCallBack: (
-    adId: string,
-    adDispatch: NativeAdDispatch,
-    onAdImpression: () => void,
-    onAdClicked: () => void,
-    onAdClosed: (completionState: CompletionState) => void,
-    onAdFailed: (error: string) => void
-  ) => void;
+export type ShowNativeAdCallBack = (
+  adId: string,
+  adDispatch: NativeAdDispatch,
+  onAdImpression: () => void,
+  onAdClicked: () => void,
+  onAdFailed: (error: string) => void,
+) => void;
+
+export type TapsellNativeAdProps = NativeAdCallbacks & {
+  children: ReactNode;
+  adId: string;
+  adDispatch: NativeAdDispatch;
+  showNativeAdCallBack: ShowNativeAdCallBack;
+};
+
+export type NativeAdViewProps = NativeAdCallbacks & {
+  adId: string;
+  showNativeAdCallBack: ShowNativeAdCallBack;
   clickNativeAdCallBack: (adId: string) => void;
 };

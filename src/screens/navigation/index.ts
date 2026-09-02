@@ -1,4 +1,4 @@
-import {NavRoutes} from './NavRoutes';
-import {Router} from './Router';
+import { NavRoutes } from './NavRoutes';
+import { Router } from './Router';
 
-export {NavRoutes, Router}
+export { NavRoutes, Router };

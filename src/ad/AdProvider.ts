@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { AdKeys } from '../Constants';
 import {
   setUserConsent,
@@ -17,30 +17,29 @@ import {
   showNativeAd,
   clickNativeAd,
   destroyBannerAd,
-  destroyNativeAd
+  destroyNativeAd,
 } from '@react-native-tapsell-mediation/tapsell';
 
 export const useAdProvider = () => {
-
   const [logMessage, setLogMessage] = useState('');
 
-  useEffect(() => {
-    clearLogs();
-  }, []);
-
-  const setUserConsentCallBack = useCallback(() => {
-    setUserConsent(true);
-  }, []);
-
   const addLog = useCallback((message: string) => {
-    setLogMessage((prevState: string) => prevState + '\n' + message);
+    setLogMessage(prevState => prevState + '\n' + message);
     console.log(message);
   }, []);
 
   const clearLogs = useCallback(() => {
     setLogMessage('');
-    console.clear();
-  }, [])
+    (console as Console & { clear?: () => void }).clear?.();
+  }, []);
+
+  useEffect(() => {
+    clearLogs();
+  }, [clearLogs]);
+
+  const setUserConsentCallBack = useCallback(() => {
+    setUserConsent(true);
+  }, []);
 
   const requestRewardedAdCallBack = useCallback(
     (zoneId: string = AdKeys.TapsellMediationKeys.REWARDED) => {
@@ -57,7 +56,7 @@ export const useAdProvider = () => {
           });
       });
     },
-    []
+    [addLog],
   );
 
   const requestInterstitialAdCallBack = useCallback(
@@ -75,13 +74,13 @@ export const useAdProvider = () => {
           });
       });
     },
-    []
+    [addLog],
   );
 
   const requestBannerCallBack = useCallback(
     (
       zoneId: string = AdKeys.TapsellMediationKeys.BANNER,
-      bannerSize: BannerSize = BannerSize.BANNER_320_50
+      bannerSize: BannerSize = BannerSize.BANNER_320_50,
     ) => {
       return new Promise<string>((resolve, reject) => {
         addLog('requestAd');
@@ -96,12 +95,12 @@ export const useAdProvider = () => {
           });
       });
     },
-    []
+    [addLog],
   );
 
   const requestNativeAdCallBack = useCallback(
     (zoneId: string = AdKeys.TapsellMediationKeys.NATIVE) => {
-      return new Promise<string>((resolve: (value: string) => void, reject) => {
+      return new Promise<string>((resolve, reject) => {
         addLog('requestAd');
         requestNativeAd(zoneId)
           .then((adId: string) => {
@@ -114,15 +113,15 @@ export const useAdProvider = () => {
           });
       });
     },
-    []
+    [addLog],
   );
 
   const requestMultipleNativeAdCallBack = useCallback(
     (
       zoneId: string = AdKeys.TapsellMediationKeys.NATIVE,
-      maximumCount: number = 5
+      maximumCount: number = 5,
     ) => {
-      return new Promise((resolve, reject) => {
+      return new Promise<string>((resolve, reject) => {
         addLog('requestAd');
         requestMultipleNativeAd(zoneId, maximumCount)
           .then((adId: string) => {
@@ -135,56 +134,61 @@ export const useAdProvider = () => {
           });
       });
     },
-    []
+    [addLog],
   );
 
-  const showRewardedAdCallBack = useCallback((adId: string) => {
-    addLog('showAd');
-    if (!adId) {
-      addLog('AdId does not exist');
-      return;
-    }
-    showRewardedAd(adId, {
-      onAdImpression: () => {
-        addLog('onAdImpression');
-      },
-      onAdClicked: () => {
-        addLog('onAdClicked');
-      },
-      onRewarded: () => {
-        addLog('onRewarded');
-        console.log('onRewarded');
-      },
-      onAdClosed: (completionState: CompletionState) => {
-        addLog('onAdClosed: ' + CompletionState[completionState]);
-      },
-      onAdFailed: (error: string) => {
-        console.log('onAdFailed', error);
-      },
-    });
-  }, []);
+  const showRewardedAdCallBack = useCallback(
+    (adId: string) => {
+      addLog('showAd');
+      if (!adId) {
+        addLog('AdId does not exist');
+        return;
+      }
+      showRewardedAd(adId, {
+        onAdImpression: () => {
+          addLog('onAdImpression');
+        },
+        onAdClicked: () => {
+          addLog('onAdClicked');
+        },
+        onRewarded: () => {
+          addLog('onRewarded');
+        },
+        onAdClosed: (completionState: CompletionState) => {
+          addLog('onAdClosed: ' + CompletionState[completionState]);
+        },
+        onAdFailed: (error: string) => {
+          addLog('onAdFailed: ' + error);
+        },
+      });
+    },
+    [addLog],
+  );
 
-  const showInterstitialAdCallBack = useCallback((adId: string) => {
-    addLog('showAd');
-    if (!adId) {
-      addLog('AdId does not exist');
-      return;
-    }
-    showInterstitialAd(adId, {
-      onAdImpression: () => {
-        addLog('onAdImpression');
-      },
-      onAdClicked: () => {
-        addLog('onAdClicked');
-      },
-      onAdClosed: (completionState: CompletionState) => {
-        addLog('onAdClosed: ' + CompletionState[completionState]);
-      },
-      onAdFailed: (error: string) => {
-        addLog('onAdFailed: ' + error);
-      },
-    });
-  }, []);
+  const showInterstitialAdCallBack = useCallback(
+    (adId: string) => {
+      addLog('showAd');
+      if (!adId) {
+        addLog('AdId does not exist');
+        return;
+      }
+      showInterstitialAd(adId, {
+        onAdImpression: () => {
+          addLog('onAdImpression');
+        },
+        onAdClicked: () => {
+          addLog('onAdClicked');
+        },
+        onAdClosed: (completionState: CompletionState) => {
+          addLog('onAdClosed: ' + CompletionState[completionState]);
+        },
+        onAdFailed: (error: string) => {
+          addLog('onAdFailed: ' + error);
+        },
+      });
+    },
+    [addLog],
+  );
 
   const showBannerAdCallBack = useCallback(
     (adId: string, position: BannerPosition = BannerPosition.Bottom) => {
@@ -205,15 +209,17 @@ export const useAdProvider = () => {
         },
       });
     },
-    []
+    [addLog],
   );
 
-  const showNativeAdCallBack = useCallback((
-    adId: string,
-    adDispatch: NativeAdDispatch,
-    onAdImpression: () => void,
-    onAdClicked: () => void,
-    onAdFailed: (error: string) => void) => {
+  const showNativeAdCallBack = useCallback(
+    (
+      adId: string,
+      adDispatch: NativeAdDispatch,
+      onAdImpression: () => void,
+      onAdClicked: () => void,
+      onAdFailed: (error: string) => void,
+    ) => {
       addLog('showAd');
       if (!adId) {
         addLog('AdId does not exist');
@@ -221,48 +227,57 @@ export const useAdProvider = () => {
       }
       showNativeAd(adId, adDispatch, {
         onAdImpression: () => {
-          onAdImpression()
+          onAdImpression();
           addLog('onAdImpression');
         },
         onAdClicked: () => {
-          onAdClicked()
+          onAdClicked();
           addLog('onAdClicked: ' + adId);
         },
         onAdFailed: (error: string) => {
-          onAdFailed(error)
-          addLog('onAdFailed: ' +  error);
+          onAdFailed(error);
+          addLog('onAdFailed: ' + error);
         },
       });
     },
-    []
+    [addLog],
   );
 
-  const clickNativeAdCallBack = useCallback((adId: string) => {
-    addLog('clickNativeAd');
-    if (!adId) {
-      addLog('AdId does not exist');
-      return;
-    }
-    clickNativeAd(adId);
-  }, []);
+  const clickNativeAdCallBack = useCallback(
+    (adId: string) => {
+      addLog('clickNativeAd');
+      if (!adId) {
+        addLog('AdId does not exist');
+        return;
+      }
+      clickNativeAd(adId);
+    },
+    [addLog],
+  );
 
-  const destroyBannerAdCallBack = useCallback((adId: string) => {
-    addLog('destroyAd');
-    if (!adId) {
-      addLog('AdId does not exist');
-      return;
-    }
-    destroyBannerAd(adId);
-  }, []);
+  const destroyBannerAdCallBack = useCallback(
+    (adId: string) => {
+      addLog('destroyAd');
+      if (!adId) {
+        addLog('AdId does not exist');
+        return;
+      }
+      destroyBannerAd(adId);
+    },
+    [addLog],
+  );
 
-  const destroyNativeAdCallBack = useCallback((adId: string) => {
-    addLog('destroyAd');
-    if (!adId) {
-      addLog('AdId does not exist');
-      return;
-    }
-    destroyNativeAd(adId);
-  }, []);
+  const destroyNativeAdCallBack = useCallback(
+    (adId: string) => {
+      addLog('destroyAd');
+      if (!adId) {
+        addLog('AdId does not exist');
+        return;
+      }
+      destroyNativeAd(adId);
+    },
+    [addLog],
+  );
 
   return {
     setUserConsentCallBack,
@@ -278,6 +293,6 @@ export const useAdProvider = () => {
     clickNativeAdCallBack,
     destroyBannerAdCallBack,
     destroyNativeAdCallBack,
-    logMessage
+    logMessage,
   };
 };

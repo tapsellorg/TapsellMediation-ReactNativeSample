@@ -22,6 +22,7 @@ export const styles = StyleSheet.create({
   },
   description: {
     fontSize: 15,
+    color: 'black',
   },
   icon: {
     width: 56,
@@ -46,6 +47,6 @@ export const styles = StyleSheet.create({
     color: '#f45201',
     fontWeight: 'bold',
     alignSelf: 'center',
-    padding: 8
+    padding: 8,
   },
 });

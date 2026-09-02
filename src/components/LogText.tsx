@@ -1,6 +1,24 @@
-import { Text } from 'react-native';
 import React from 'react';
+import { ScrollView, StyleProp, StyleSheet, Text, ViewStyle } from 'react-native';
 
-export const LogText = ({ message, ...props }) => {
-  return <Text {...props}>{message ?? ''}</Text>;
+type LogTextProps = {
+  message: string;
+  style?: StyleProp<ViewStyle>;
 };
+
+export const LogText = ({ message, style }: LogTextProps) => {
+  return (
+    <ScrollView style={[styles.log, style]}>
+      <Text style={styles.text}>{message}</Text>
+    </ScrollView>
+  );
+};
+
+const styles = StyleSheet.create({
+  log: {
+    flex: 1,
+  },
+  text: {
+    color: 'black',
+  },
+});

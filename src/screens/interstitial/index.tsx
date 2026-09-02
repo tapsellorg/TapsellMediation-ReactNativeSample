@@ -6,25 +6,26 @@ import { useAdProvider } from '../../ad/AdProvider';
 import { LogText } from '../../components';
 
 const InterstitialScreen = () => {
-
-  const [ad, setAd] = useState(null);
-  const { requestInterstitialAdCallBack, showInterstitialAdCallBack, logMessage } = useAdProvider();
+  const [ad, setAd] = useState<string | null>(null);
+  const { requestInterstitialAdCallBack, showInterstitialAdCallBack, logMessage } =
+    useAdProvider();
 
   return (
     <View style={styles.container}>
       <Button
         title="Request Ad"
-        onPress={() =>
-          requestInterstitialAdCallBack(AdKeys.TapsellMediationKeys.REWARDED).then((id: string) => {
-            setAd(id);
-          })
-        }
+        onPress={async () => {
+          try {
+            const adId = await requestInterstitialAdCallBack(
+              AdKeys.TapsellMediationKeys.INTERSTITIAL,
+            );
+            setAd(adId);
+          } catch {}
+        }}
       />
       <Button
         title="Show Ad"
-        onPress={() =>
-          showInterstitialAdCallBack(ad)
-        }
+        onPress={() => showInterstitialAdCallBack(ad ?? '')}
       />
       <LogText message={logMessage} />
     </View>
@@ -32,4 +33,3 @@ const InterstitialScreen = () => {
 };
 
 export default InterstitialScreen;
-

@@ -1,1 +1,1 @@
-export {LogText} from './LogText';
+export { LogText } from './LogText';
